@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Switch, Route, Link, withRouter } from "react-router-dom";
 import { Meteor } from "meteor/meteor";
 import { Tasks } from "../api/task";
 import { withTracker } from "meteor/react-meteor-data";
@@ -43,15 +44,30 @@ export class App extends Component {
           <input type="text" ref={input => (this.textInput = input)} />
           <button onClick={this.addNewTask.bind(this)}>submit</button>
         </form>
+
+        <ul>
+          <li>
+            <Link to="/">Root</Link>
+          </li>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
+        </ul>
+        <Switch>
+          <Route exact path="/" render={() => <div>Root path</div>} />
+          <Route path="/about" render={() => <div>About page</div>} />
+        </Switch>
       </div>
     );
   }
 }
 
-export default withTracker(() => {
-  Meteor.subscribe("tasks");
+export default withRouter(
+  withTracker(() => {
+    Meteor.subscribe("tasks");
 
-  return {
-    tasks: Tasks.find({}).fetch()
-  };
-})(App);
+    return {
+      tasks: Tasks.find({}).fetch()
+    };
+  })(App)
+);
