@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+import { Meteor } from "meteor/meteor";
 import styled from "styled-components";
+import { start } from "repl";
 
 const Li = styled.li`
   background-color: ${props => (props.checked ? "grey" : "green")};
@@ -8,6 +10,14 @@ const Li = styled.li`
   :hover {
     background-color: lightgreen;
   }
+  :after {
+    clear: both;
+  }
+`;
+
+const Button = styled.button`
+  float: right;
+  width: 100px;
 `;
 
 function Task({ task, onCheck }) {
@@ -21,6 +31,14 @@ function Task({ task, onCheck }) {
         defaultChecked={task.checked}
       />
       {task.text}
+      <Button
+        onClick={e => {
+          e.preventDefault();
+          Meteor.call("tasks.remove", task._id);
+        }}
+      >
+        Delete
+      </Button>
     </Li>
   );
 }

@@ -1,35 +1,38 @@
 import React, { Component } from "react";
+import { Meteor } from "meteor/meteor";
+import { Tasks } from "../api/task";
 import { withTracker } from "meteor/react-meteor-data";
-import { Tasks } from "../api/task.js";
-import TaskList from "./TaskList.js";
+import Login from "./Login";
+import Register from "./Register";
+import TaskList from "./TaskList";
 
 // App component - represents the whole app
 export class App extends Component {
   addNewTask(e) {
     e.preventDefault();
-    console.log(this.textInput.value);
 
-    Tasks.insert({
-      text: this.textInput.value.trim(),
-      createdAt: new Date()
-    });
+    Meteor.call("tasks.insert", this.textInput.value.trim());
 
     this.textInput.value = null;
   }
 
   toggleCheck(task) {
-    Tasks.update(
-      { _id: task._id },
-      { $set: { checked: task.checked ? !task.checked : true } }
-    );
+    Meteor.call("tasks.setChecked", task._id, !task.checked);
   }
 
   render() {
+    const user = Meteor.user();
     return (
       <div className="container">
         <header>
           <h1>Todo List</h1>
         </header>
+
+        {!user ? (
+          [<Login key="login" />, <Register key="register" />]
+        ) : (
+          <div>{user.username}</div>
+        )}
 
         <TaskList
           tasks={this.props.tasks}
@@ -46,6 +49,8 @@ export class App extends Component {
 }
 
 export default withTracker(() => {
+  Meteor.subscribe("tasks");
+
   return {
     tasks: Tasks.find({}).fetch()
   };
