@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Switch, Route, Link, withRouter } from "react-router-dom";
 import { Meteor } from "meteor/meteor";
-import { Tasks } from "../api/task";
+import { Tasks, setChecked, insertTask } from "../api/task";
 import { withTracker } from "meteor/react-meteor-data";
 import Login from "./Login";
 import Register from "./Register";
@@ -12,13 +12,13 @@ export class App extends Component {
   addNewTask(e) {
     e.preventDefault();
 
-    Meteor.call("tasks.insert", this.textInput.value.trim());
+    insertTask.call({ text: this.textInput.value.trim() });
 
     this.textInput.value = null;
   }
 
   toggleCheck(task) {
-    Meteor.call("tasks.setChecked", task._id, !task.checked);
+    setChecked.call({ taskId: task._id, checked: !task.checked });
   }
 
   render() {

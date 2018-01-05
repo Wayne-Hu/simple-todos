@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Meteor } from "meteor/meteor";
 import styled from "styled-components";
-import { start } from "repl";
+import { removeTask } from "../api/task";
 
 const Li = styled.li`
   background-color: ${props => (props.checked ? "grey" : "green")};
@@ -34,7 +34,7 @@ function Task({ task, onCheck }) {
       <Button
         onClick={e => {
           e.preventDefault();
-          Meteor.call("tasks.remove", task._id);
+          removeTask.call({ taskId: task._id });
         }}
       >
         Delete
